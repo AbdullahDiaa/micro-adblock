@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE mydialog SYSTEM "chrome://myaddon/locale/mydialog.dtd">
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<setting pref="extensions.micro-adblock.social" type="bool" title="Disable Social buttons">
+	  Enabling this will disable social buttons tracking from twitter,facebook,G+, linkedin, addthis and many others.
+	</setting>
+   
+    <setting pref="extensions.micro-adblock.reloadPage" title="Reload tab on enable/disable" type="bool">Enabling this will reload the page once you disable/enable µ Adblock on any website.</setting>
+
+    <setting pref="browser.polaris.enabled" type="bool" title="Enable Polaris">Polaris is tracking protection in firefox 33.1+. for more details https://wiki.mozilla.org/Polaris</setting>
+</vbox>
