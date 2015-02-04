@@ -139,6 +139,5 @@ let prefs = {
 	}
 }
 
-
 // Always set the default prefs.
 prefs.setDefaultPrefs();

@@ -17,18 +17,17 @@ var BlockRe = [
 	/(?:\.|^)(?:1sadx|247teencash|4affiliate|777(?:\-partners?|partner)|888media|a(?:2dfp|bnad|cf\-webmaster|d(?:20|\-(?:ba(?:ck|lancer)|delivery|srv)|a(?:dvisor|os\-ads)|b(?:a(?:r[ds]|sket)|ooth|ureau)|c(?:astplus|loud)|dynamo|f(?:01|orm)|g(?:ine|lamour)|hese|impression|juggler|kick|l(?:ayer|ink)|m(?:a(?:gnet|rketplace)|edias|i(?:ssion|xer))|n(?:et\-media|xs)|orika|p(?:rs|arad)|s(?:2ads|campaign|f(?:ac(?:tor)?|undi)|mws\.cloudapp|next|r(?:evenue|vmedia)|sites|ummos)|t(?:egrity|ransfer)|ult(?:imate|advertising|commercial)|v(?:9|er(?:serve|t(?:i(?:cum|singpath)|lead|pay))|iva)|worldmedia|zerk|rent|\.(?:e\-kolay|realmcdn|favod))|f(?:fi(?:z|li(?:gay|ate\.mediatemple))|y11)|jansreklam|m15|n(?:dohs|rdoezrs)|r(?:cadebannerexchange|tbr)|tomex|vazu(?:tracking)?|waps)|b(?:anner(?:bridge|connect|performance|snack)|eead|h3|i(?:gadpoint|tads)|r(?:and(?:affinity)?|ightcpm)|uzzcity)|c(?:\-planet|entralnervous|hitika|itysite|jt1|l(?:ick(?:bubbles|e(?:quations|xperts)|intext|kingdom|sor)|z3)|o(?:digobarras|gocast|inadvert|llective\-media|n(?:ne(?:ctedads|xity)|te(?:nt(?:widgets|cache\-a\.akamaihd)|xtads))|uponcp\-a\.akamaihd)|pmmedia|riteo|am(?:\-lolita|ads)|dn(?:\.nsimg|cache2\-a\.akamaihd))|d(?:\.m3|a(?:pper|shboardad|texchanges)|e(?:cknetwork|player|siad|als\.buxr)|o(?:uble(?:max)?|wnloadandsave\-a\.akamaihd)|pbolvw|sero|vaminusodin|raugonda)|e(?:\-planning|d(?:omz|abl)|ffectivemeasure|l(?:asticad|vate)|rger(?:ww|s)|yewond\.hs\.llnwd|z(?:adserver|oic)|blastengine\.upickem|ngine\.gamerati|trader\.kalahari)|f(?:a(?:lkag|st(?:api|click)|cetz)|i(?:ndbestsolution|ckads)|l(?:a(?:gads|urse)|lwert|ipflapflo)|mpub|o(?:rex\-affiliate|war)|reedownloadsoft|u(?:lltraffic|sionads))|g(?:an\.doubleclick|e(?:ek2us|ld\-internet\-verdienen|oaddicted)|lobal(?:\-success\-club|adv|takeoff)|mads|oviral\.hs\.llnwd|scontxt|ghfncd|iantsavings\-a\.akamaihd)|h(?:a(?:vamedia|pnr)|dvid\-codecs\-dl|illtopads|o(?:tfeed|bri|stave4)|ypemakers)|i(?:n(?:nity|sta\-cash|t(?:e(?:r(?:activespot|m(?:arkets|rkts\.vo\.llnwd)|nebula)|xtual)|gr))|v\.doubleclick|wantmoar|giplay|mg\.servint)|j(?:dproject|que|ssearch|uic(?:eadv|ycash)|ackao)|k(?:9x|erg|orrelate|rxd|ingpinmedia)|l(?:duhtrp|eadbolt|i(?:nk(?:exchangers|offers|storm|z)|qwid|veadserver))|m(?:5prod|a(?:kemoneymakemoney|rketfly)|dadvertising|ed(?:ia(?:(?:\-(?:ks|servers)|lation|onenetwork))?|yanet)|icrosoftaffiliates|mngte|o(?:nkeybroker|vad|bizme)|pression|sads|y(?:\-layer|webclick))|n(?:4403ad\.doubleclick|e(?:t(?:flixalternative|shelter|worldmedia)|wtention)|mwrdr|owlooking|uggad|vero|gbn)|o(?:ldtiger|n(?:clickads|enetworkdirect|lyalad|sitemarketplace)|pt(?:\-n|iad)|ddads|taserve)|p(?:a(?:gefair|id(?:onresults|\-to\-promote))|eer39|i(?:ctela|xfuture|kkr)|lusfind|o(?:lyad|p(?:ads(?:cdn)?|cash|ularmedia|\-bazar)|werfulbusiness|rn(?:88|99))|r(?:o(?:\-market|tally|fistats)|ivateseiten)|tp\.lolco|u(?:b(?:licidad|serve)|rpleflag))|q(?:ks(?:rv|z)|wobl)|r(?:cads|e(?:a(?:dserver|lvu)|d(?:intelligence|cash)|spond\-adserver\.cloudapp|v(?:fusion|sci)|gersd|targetpro|poro)|fihub|nmd|ocketier|tbidder|mbn)|s(?:a(?:feadnetworkdata|ple|veads|ncdn)|e(?:ekads|lsin|nzapudore|rvali|venads|x(?:ad|ypower))|ilverads|ma(?:rt(?:erdownloads|targetting)|ato)|n00|o(?:nnerie|cialsexnetwork)|p(?:e(?:cificclick|edsuccess)|i(?:derhood|nbox))|rtk|t(?:at(?:camp|\-data)|ocker\.bonnint)|u(?:blimemedia|nmedia|per\-links|rveyvalue)|vlu|xrrxa|creencapturewidget\.aebn)|t(?:a(?:coda|ggify|rgettrafficmarketing)|e(?:chclicks|lemetryverification|racent)|h(?:4wwe|epiratereactor|umbnail\-galleries)|o(?:p26|rr(?:ida|pedoads)|tal\-media)|qlkg|r(?:a(?:ck(?:advertising|ingoffer|promotion|starsengland|word)|deexpert|f(?:f(?:boost|ic(?:junky|masterz|revenue|spaces|trader|wave))|ogon)|velmail\.traveltek)|kclk|ndi)|u(?:mri|rbotraff)|itsbro|m(?:\-core|server\-2))|u(?:dmserve|rl(?:ads|cash)|nlimedia)|v(?:alue(?:affiliate|c(?:lick|ontent))|e(?:lmedia|r\-pelis)|i(?:ewablemedia|sualsteel|talads|vamob)|sservers|uiads|ktr073|roll)|w(?:00tmedia|cmcs|egetpaid|hy\-outsource|idget(?:lead|value)|ootmedia)|x(?:graph|xlink|clicks|mediawebs)|y(?:ceml|ield(?:lab|manager(?:\.edgesuite)?)|ldmgrimg|tsa|odr)|z(?:5x|xxds|rfrornn|mh\.zope))\.net$/,
 	
 	/(?:\.|^)(criteo|doubleclick|google(\-analytics|adservices|syndication|tagservices)\.com$)/
-	
 ];
 
-var customBlock = '';
-
-// Social media buttons URLs
-var social = /(\.|)(?:a(?:ddthis\.com\/.*addthis_widget\.js|k\.facebook\.com\/connect|pis\.google\.com\/(?:js\/plusone\.js|_\/apps\-static)|ssets\.pinterest\.com\/.*)|widgets\.digg\.com(?:\/buttons\.js)?|connect\.facebook\.net|facebook\.com\/(?:plugins\/(?:like(?:\.php|box\.php)|activity\.php)|dialog\/oauth)|p(?:l(?:usone\.google\.com\/_\/(?:\+1\/fastbutton|apps\-static)|atform\.(?:linkedin\.com|stumbleupon\.com\/1\/widgets\.js|twitter\.com(?:\/widgets\.js|\/widgets)?))|assets\-cdn\.pinterest\.com\/imagePaths\/about\/buttons\/|\.twitter\.com)|linkedin\.com\/analytics|stumbleupon\.com\/hostedbadge\.php|badge\.stumbleupon\.com)/;
-
-let policy =
-{
+let policy = {
+	
+	// Social media buttons URLs
+	social : /(\.|)(?:a(?:ddthis\.com\/.*addthis_widget\.js|k\.facebook\.com\/connect|pis\.google\.com\/(?:js\/plusone\.js|_\/apps\-static)|ssets\.pinterest\.com\/.*)|widgets\.digg\.com(?:\/buttons\.js)?|connect\.facebook\.net|facebook\.com\/(?:plugins\/(?:like(?:\.php|box\.php)|activity\.php)|dialog\/oauth)|p(?:l(?:usone\.google\.com\/_\/(?:\+1\/fastbutton|apps\-static)|atform\.(?:linkedin\.com|stumbleupon\.com\/1\/widgets\.js|twitter\.com(?:\/widgets\.js|\/widgets)?))|assets\-cdn\.pinterest\.com\/imagePaths\/about\/buttons\/|\.twitter\.com)|linkedin\.com\/analytics|stumbleupon\.com\/hostedbadge\.php|badge\.stumbleupon\.com)/,
+	customBlock : '',
+	
 	ACCEPT : Ci.nsIContentPolicy.ACCEPT,
 	REJECT: Ci.nsIContentPolicy.REJECT,
+	
 	classDescription: "Micro Adblock",
 	classID: Components.ID("9B459D3A-9E40-11E4-8BAF-F5181D5D46B0"),
 	contractID: "@micro-adblock;1",
@@ -82,10 +81,14 @@ let policy =
 				if(win){
 					// If window node is the browser
 					if(win.location.host === 'browser'){
+						
+						// Update custom block list
 						if(database.divslist){
 							var regex = Object.keys(database.divslist);
-							customBlock = new RegExp("(?:\.|^)" + regex.join("|"), "i");
+							if(regex.length > 0)
+								this.customBlock = new RegExp("(?:\.|^)" + regex.join("|"), "i");
 						}
+						
 						return this.ACCEPT;
 					}
 						
@@ -97,8 +100,8 @@ let policy =
 									
 				var i = BlockRe.length;
 				
-				if(customBlock){
-					if(customBlock.test(host)){
+				if(this.customBlock){
+					if(this.customBlock.test(host)){
 						return this.REJECT;
 					}
 				}
@@ -110,7 +113,7 @@ let policy =
 						return this.REJECT;					
 					}else{
 						if(prefs.getPref("social")){
-							if(social.test(host)){
+							if(this.social.test(host)){
 								return this.REJECT;
 							}
 						}
