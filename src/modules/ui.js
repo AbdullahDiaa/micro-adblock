@@ -9,7 +9,7 @@ function toggleButton(){
 	this.img.src = (this.getAttribute('cui-areatype') == "menu-panel") ? getIcon(32, toggle) :   getIcon(16, toggle);
 	
 	// Reload page on toggle
-	if(getPref("reloadPage")){
+	if(prefs.getPref("reloadPage")){
 		let window = Services.wm.getMostRecentWindow("navigator:browser");
 		window.content.document.location.reload(true);
 	}
@@ -250,7 +250,7 @@ function loadIntoWindow(window) {
 		toolbox.palette.appendChild(button);
 	  
 		// move to saved toolbar position
-		let {toolbarId, nextItemId} = getPrefs(),	  
+		let {toolbarId, nextItemId} = prefs.getPrefs(),	  
 		toolbar = toolbarId && $( window, toolbarId);
 	  
 		if (toolbar) {
@@ -311,29 +311,6 @@ function unloadFromWindow(window) {
 		}
 	}	
 }
-
-function setPrefs(toolbarId, nextItemId) {
-	PREFS_BRANCH.setCharPref(PREF_TB, toolbarId || "");
-	PREFS_BRANCH.setCharPref(PREF_NEXT, nextItemId || "");
-}
-
-function getPrefs() {	
-	try {
-		//Australis nav bar
-		var ins = "nav-bar-customization-target";
-	} catch (e) {
-		console.log("ERR", e.name)
-	}
-	
-	//Old navbar
-	if(!ins)
-		ins = "nav-bar";
-	
-	return {
-		toolbarId: getPref(PREF_TB) ? getPref(PREF_TB) : ins,
-		nextItemId: getPref(PREF_NEXT) ? getPref(PREF_NEXT) :"bookmarks-menu-button-container"
-	};
-};
 
 function afterCustomize(e) {
 	if (!window)

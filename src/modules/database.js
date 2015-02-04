@@ -56,9 +56,9 @@ let database = {
 		
 		
 		//Check for any synced whitelist data 
-		let synced_whitelist = getSyncedList("whitelist");
-		let synced_blocklist = getSyncedList("blocklist");
-		let synced_divslist = getSyncedList("divslist");
+		let synced_whitelist = prefs.getSyncedList("whitelist");
+		let synced_blocklist = prefs.getSyncedList("blocklist");
+		let synced_divslist = prefs.getSyncedList("divslist");
 		//Merge synced data
 		if(synced_whitelist){
 			if(!arr.whitelist) arr.whitelist = {};
@@ -103,9 +103,9 @@ let database = {
 		}
 		
 		// Update synced data
-		syncList("whitelist", JSON.stringify(this.whitelist));
-		syncList("blocklist", JSON.stringify(this.blocklist));
-		syncList("divslist", JSON.stringify(this.divslist));
+		prefs.syncList("whitelist", JSON.stringify(this.whitelist));
+		prefs.syncList("blocklist", JSON.stringify(this.blocklist));
+		prefs.syncList("divslist", JSON.stringify(this.divslist));
 		
 	},
 

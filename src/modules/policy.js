@@ -109,7 +109,7 @@ let policy =
 						i =0;
 						return this.REJECT;					
 					}else{
-						if(getPref("social")){
+						if(prefs.getPref("social")){
 							if(social.test(host)){
 								return this.REJECT;
 							}

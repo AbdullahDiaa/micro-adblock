@@ -26,10 +26,6 @@ var dirService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIPr
 
 const 	global = this,
 		NS_XUL = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
-		PREFS_BRANCH = "extensions.micro-adblock.",
-		SYNC_BRANCH =  'services.sync.prefs.sync.extensions.micro-adblock.',
-		PREF_TB = "toolbar",
-		PREF_NEXT = "next-item",
 		BUTTON_ID = "micro-adblock-toolbar-button";
 
 // easy and useful helpers for when I'm debugging
