@@ -12,6 +12,9 @@
 let database = {
 	
 	whitelist : {},
+	blocklist : {},
+	divslist : {},
+	
 	file : dirService.get("ProfD", Ci.nsIFile),
 	init: function(){
 		// Get whitelist store.json file [migrating data from simple-storage of Addons SDK]
@@ -21,7 +24,8 @@ let database = {
 		this.file.append("store.json");
 		
 		this.whitelist = {};
-		
+		this.blocklist = {};
+		this.divslist = {};
 		
 		if (!this.file.exists())
 		{
@@ -50,17 +54,37 @@ let database = {
 	
 		var arr = JSON.parse(json);
 		
-		//Check for any synced whitelist data 
-		let synced_whitelist = getSyncedWhiteList();
 		
+		//Check for any synced whitelist data 
+		let synced_whitelist = getSyncedList("whitelist");
+		let synced_blocklist = getSyncedList("blocklist");
+		let synced_divslist = getSyncedList("divslist");
 		//Merge synced data
 		if(synced_whitelist){
+			if(!arr.whitelist) arr.whitelist = {};
+			
 			for (var website in synced_whitelist) {
 			  arr.whitelist[website] = true;
 			}
 		}
+		if(synced_blocklist){
+			if(!arr.blocklist) arr.blocklist = {};
+			
+			for (var website in synced_blocklist) {
+			  arr.blocklist[website] = synced_blocklist[website];
+			}
+		}
 		
-		if (!arr.whitelist)
+		if(synced_divslist){
+			if(!arr.synced_divslist) arr.synced_divslist = [];
+			
+			for (var website in synced_divslist) {
+  			  	arr.divslist[website] = true;
+			}
+		}
+		
+		
+		if (!arr.whitelist && ! arr.blocklist && !arr.divslist)
 			return;
 		
 		 // convert to map for faster lookup
@@ -68,13 +92,31 @@ let database = {
 		  this.whitelist[website] = true;
 		}
 		
+		 // convert to map for faster lookup
+		for (var website in arr.blocklist) {
+		  this.blocklist[website] = arr.blocklist[website];
+		}
+
+		 // convert to map for faster lookup
+		for (var website in arr.divslist) {
+			 this.divslist[website] = true;
+		}
+		
 		// Update synced data
-		syncWhitelist(JSON.stringify(this.whitelist));
+		syncList("whitelist", JSON.stringify(this.whitelist));
+		syncList("blocklist", JSON.stringify(this.blocklist));
+		syncList("divslist", JSON.stringify(this.divslist));
+		
 	},
 
 	record: function(activeWindow){
 		if(activeWindow === "") return;
 		this.whitelist[activeWindow] = true;
+	},
+	
+	record_div: function(url){
+		if(url === "") return;
+		this.divslist[url] = true;
 	},
 	
 	remove: function(activeWindow){
@@ -108,11 +150,21 @@ let database = {
 		outputStream.init(this.file, 0x02 | 0x08 | 0x20, 0666, 0);
 		
 		// Convert data to JSON.
-		var arr = {"whitelist": {} };
+		var arr = {"whitelist": {}, "blocklist" : {}, "divslist" : {}};
 		
 		for (var url in this.whitelist)
 		{
 			arr.whitelist[url] = true;
+		}
+		
+		for (var url in this.blocklist)
+		{
+			arr.blocklist[url] = this.blocklist[url];
+		}
+		
+		for (var url in this.divslist)
+		{
+			arr.divslist[url] = true;			
 		}
 		
 		var jsonString = JSON.stringify(arr);
@@ -122,6 +174,9 @@ let database = {
 		outputStream.close();
 		
 		this.whitelist = {};
+		this.blocklist = {};
+		this.divslist = {};
+		
 	}
 }
 
