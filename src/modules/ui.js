@@ -5,13 +5,21 @@ let $ = function(window, id) window.document.getElementById(id);
  * Toggle whitelist record
  */
 function toggleButton(){
+	let toggle = !database.toggle();	
+	this.img.src = (this.getAttribute('cui-areatype') == "menu-panel") ? getIcon(32, toggle) :   getIcon(16, toggle);
+	
 	// Reload page on toggle
 	if(getPref("reloadPage")){
 		let window = Services.wm.getMostRecentWindow("navigator:browser");
 		window.content.document.location.reload(true);
 	}
-	let toggle = !database.toggle();
-	this.img.src = (this.getAttribute('cui-areatype') == "menu-panel") ? getIcon(32, toggle) :   getIcon(16, toggle);
+}
+
+
+function onCommand(event) {
+	var target = event.target;
+	if (!target) return;
+	database.record_div(target.block);
 }
 
 /**
@@ -51,206 +59,93 @@ function getIcon(size, enabled){
  */
 function handlePageLoad(e) {
 	try {
-		let doc = e.originalTarget;
-		let win = doc.defaultView;
 		
-		if(null != doc.location.host && "" != doc.location.host){
-
-			var observeDOM = (function(){
-				var MutationObserver = win.MutationObserver;
-
-				return function(obj, callback){
-					// define a new observer
-					var obs = new MutationObserver(function(mutations){
-						if( mutations[0].addedNodes.length || mutations[0].removedNodes.length )
-							callback();
-					});
-					// have the observer observe foo for changes in children
-					obs.observe( obj, { childList:true, subtree:true });
-				}
-			})();
-			var domain = (doc.location.host.match(/([^.]+)\.\w{2,3}(?:\.\w{2})?$/) || [])[1]
-
-			if(database.isWhitelisted(doc.location.host))
-				return;
-			
-			// Delete Ad blocks from twitter/facebook/daum/naver/google/youtube
-			switch(domain){
-			case 'twitter':
-				var target = doc.querySelector('#timeline');
-					
-				if(!target)
-					return;
-					
-				observeDOM( target ,function(){ 
-					var elements = doc.querySelectorAll(".promoted-tweet, .promoted-account,.promoted-trend");
-					var i = elements.length;
-
-					while(i--) {
-						console.log("Dleteling Promoted Tweet.");
-						elements[i].parentNode.removeChild(elements[i]);
-					}
-				});
-					
-				return;
-				
-			case 'youtube':
-				var target = doc.querySelector('#page-container');
-					
-				if(!target)
-					return;
-					
-				observeDOM( target ,function(){ 
-					var elements = doc.querySelectorAll("#ad_creative_1, .ad-container, #google_companion_ad_div");
-					var i = elements.length;
-
-					while(i--) {
-						console.log("Dleteling Youtube Ads.");
-						elements[i].parentNode.removeChild(elements[i]);
-					}
-				});
-				return;
-				
-			case 'yahoo':
-					
-				var elements = doc.querySelectorAll(".spnd, .ads");
-				var i = elements.length;
-					
-				while(i--) {
-					console.log("Dleteling YAHOO! Ads.");
-					elements[i].parentNode.removeChild(elements[i]);
-				}
-
-				var links = doc.querySelectorAll('a[dirtyhref].yschttl');
-
-				if(links.length > 0){
-					for ( var i = 0; i < links.length; i++ ) {
-						console.log("Stripping YAHOO! links");
-						links[i].removeAttribute( 'dirtyhref' );
-					}
-				}					
-				return;
-				
-			case 'google':
-				
-				var target = doc.querySelector('body');
-					
-				if(!target)
-					return;
-									
-				observeDOM( target ,function(){ 
-					var links = doc.querySelectorAll("#ires h3 a[onmousedown], #ires .fc a[onmousedown]");
-					if(links.length > 0){
-						for ( var i = 0; i < links.length; i++ ) {
-							console.log("Stripping Google! links.");
-							links[i].removeAttribute( 'onmousedown' );
-						}
-					}
-					
-					var ads = doc.querySelectorAll("li.ads-ad, h2._hM, div._M2b, div#bottomads");
-					if(ads.length > 0){
-						for ( var y = 0; y < ads.length; y++ ) {
-							console.log("Stripping Google! Ads.");
-							ads[y].parentNode.removeChild(ads[y]);
-						}
-					}
-				});
-				return;
-			
-			case 'facebook':
-			
-				var target = doc.querySelector('body');
-				
-				if(!target)
-					return;
-								
-				observeDOM( target ,function(){ 
-					var elements = doc.querySelectorAll("#home_sponsor_nile, #pagelet_ego_pane, .ego_column");
-					var i = elements.length;
-
-					while(i--) {
-						console.log("Dleteling Facebook Ads.");
-						elements[i].parentNode.removeChild(elements[i]);
-					}
-				});
-				return;
-			
-			case 'daum':
+		var win = e.originalTarget.defaultView;
+		var doc = win.document;
+		var blocklist = database.blocklist;
 		
-				var target = doc.querySelector('body');
-			
-				if(!target)
-					return;
-							
-				observeDOM( target ,function(){ 
-					var links = doc.querySelectorAll(".wrap_tit a");
-					if(links.length > 0){
-						for ( var i = 0; i < links.length; i++ ) {
-							console.log("Stripping DAUM! links.");
-							links[i].removeAttribute( 'onclick' );
-						}
-					}
-						
-					var elements = doc.querySelectorAll(".ad_sch");
-					var i = elements.length;
-
-					while(i--) {
-						console.log("Dleteling DAUM Ads.");
-						elements[i].parentNode.removeChild(elements[i]);
-					}
-				});
-				return;
-			
-			case 'naver':
-	
-				var target = doc.querySelector('.inner_article');
+		if(null === doc.location.host || "" === doc.location.host)
+			return;
 		
-				if(!target)
-					return;
-						
-				observeDOM( target ,function(){ 
-					var links = doc.querySelectorAll("ul.type01 a");
-					if(links.length > 0){
-						for ( var i = 0; i < links.length; i++ ) {
-							console.log("Stripping Naver! links.");
-							links[i].removeAttribute( 'onclick' );
-						}
-					}
-					
-					var elements = doc.querySelectorAll(".ad_section");
-					var i = elements.length;
-
-					while(i--) {
-						console.log("Dleteling Naver Ads.");
-						elements[i].parentNode.removeChild(elements[i]);
-					}
-				});
-				return;
-			
-			case 'facebook':
-		
-				var target = doc.querySelector('body');
-			
-				if(!target)
-					return;
-							
-				observeDOM( target ,function(){ 
-					var elements = doc.querySelectorAll("#home_sponsor_nile, #pagelet_ego_pane, .ego_column");
-					var i = elements.length;
-					
-					while(i--) {
-						console.log("Dleteling Facebook Ads.");
-						elements[i].parentNode.removeChild(elements[i]);
-					}
-				});
-				return;
-			
-			default:
-				return;
-			}
+		if(database.isWhitelisted(doc.location.host)){
+			console.log(doc.location.host + " is whitelisted.");
+			return;
 		}
+		
+		var domain = (doc.location.host.match(/([^.]+)\.\w{2,3}(?:\.\w{2})?$/) || [])[1]
+		
+		if(blocklist[domain]){
+			
+			// Monitor target element and observe it to remove 
+			if(blocklist[domain].t){
+				// select the target node
+				var target = doc.querySelector(blocklist[domain].t);
+			 	   	
+				if(target){
+					if(blocklist[domain].r){
+						var elements = doc.querySelectorAll(blocklist[domain].r);
+						var i = elements.length;
+
+						while(i--) {
+							console.log("Removed", blocklist[domain].r);
+							elements[i].parentNode.removeChild(elements[i]);
+						}
+					}
+					
+					// Remove attribute from links
+					if(blocklist[domain].l){
+						var links = doc.querySelectorAll(blocklist[domain].l.t);
+
+						if(links.length > 0){
+							for ( var i = 0; i < links.length; i++ ) {
+								console.log("Cleaning links");
+								links[i].removeAttribute( blocklist[domain].l.r );
+							}
+						}
+					}
+					
+					if(blocklist[domain].o){
+						var MutationObserver = win.MutationObserver;
+						// create an observer instance
+						var observer = new MutationObserver(function(mutations) {
+							if(blocklist[domain].r){
+								var elements = doc.querySelectorAll(blocklist[domain].r);
+								var i = elements.length;
+
+								while(i--) {
+									console.log("Removed", blocklist[domain].r);
+									elements[i].parentNode.removeChild(elements[i]);
+								}
+							}
+							
+							// Remove attribute from links
+							if(blocklist[domain].l){
+								var links = doc.querySelectorAll(blocklist[domain].l.t);
+
+								if(links.length > 0){
+									for ( var i = 0; i < links.length; i++ ) {
+										console.log("Cleaning links");
+										links[i].removeAttribute( blocklist[domain].l.r );
+									}
+								}
+							}
+							
+						});
+				
+						// configuration of the observer:
+						var config = { childList:true };
+ 
+						// pass in the target node, as well as the observer options
+						observer.observe(target, config);
+					}
+				}
+			}
+						
+		}
+		
+		return;
 	} catch (e) {
-		console.log("ERR", e.name);
+		console.log("ERR", e);
 	}
 }
 
@@ -260,7 +155,9 @@ function eachWindow(callback) {
 	
 	while (windowEnumerator.hasMoreElements()) {
 		let domWindow = windowEnumerator.getNext();
+	
 		if (domWindow.document.readyState === 'complete') {
+			domWindow.addEventListener("DOMContentLoaded", handlePageLoad, false);
 			callback(domWindow);
 		} else {
 			runOnLoad(domWindow, callback);
@@ -276,8 +173,34 @@ function runOnLoad (window, callback) {
 }
 
 function windowWatcher (subject, topic) {
+
 	if (topic === "domwindowopened") {
 		runOnLoad(subject, loadIntoWindow);
+	}
+}
+
+function decideToShowMyMenuItem(event) {
+	var window = event.target.ownerDocument.defaultView;
+	var document = window.document;
+	var myMenuItem = document.getElementById('myMenuItem');
+	
+	if (myMenuItem) {
+		var popupNode = document.popupNode; //this is the target clicked on but its prefered to use triggerNode; //note: very different from event.target //see here: https://developer.mozilla.org/en-US/docs/Web/API/document.popupNode?redirectlocale=en-US&redirectslug=DOM%2Fdocument.popupNode //event.target is the menupopup itself
+ 	   
+		if (popupNode.parentNode.nodeName == 'A') {
+			//sometimes people put elements between the a tags like: <a href="blah"><b>bolded link</b></a>
+			//so we check to see if parentNode is link
+			popupNode = popupNode.parentNode;			
+		}
+		//cDump(popupNode);
+		var href = popupNode.href; //dont do popupNode.getAttribute() because if href is relative path, it wont have base name in it
+		//Cu.reportError('href = ' + href)
+		if (href) { //test if clicked on an element that has href attribute, or you can do popupNode.nodeName == 'A' to test if clicked on link
+			myMenuItem.label = "Block [" +  popupNode.hostname + "]";
+			myMenuItem.hidden = false;
+			myMenuItem.block = popupNode.hostname;
+			
+		}
 	}
 }
 
@@ -285,7 +208,21 @@ function loadIntoWindow(window) {
 	if (!window)
 		return;
 	
-	window.addEventListener("DOMContentLoaded", handlePageLoad, true);
+	var contentAreaContextMenu = window.document.getElementById('contentAreaContextMenu');
+	if (contentAreaContextMenu) {
+		var menuItem = window.document.createElement('menuitem');
+		menuItem.setAttribute('label', 'Block');
+		menuItem.setAttribute("class", "menuitem-iconic");
+		menuItem.setAttribute('id', 'myMenuItem');
+		menuItem.setAttribute('image', "chrome://microadblock/skin/icon16.png");
+		menuItem.setAttribute('hidden', 'true');
+		menuItem.addEventListener("command", onCommand, false);
+		
+		contentAreaContextMenu.appendChild(menuItem);
+
+		contentAreaContextMenu.addEventListener('popupshowing',decideToShowMyMenuItem,false);
+	}
+	
 	let toolbox = window.gNavToolbox || $(window, 'navigator-toolbox');
 	
 	if (toolbox) { // navigator window
@@ -331,7 +268,26 @@ function unloadFromWindow(window) {
 	if (!window)
 		return;
 	
-	window.removeEventListener("DOMContentLoaded", handlePageLoad, true);
+	var contentAreaContextMenu = $(window, 'contentAreaContextMenu');
+	if (contentAreaContextMenu) {
+		var myMenuItem = $(window, 'myMenuItem');
+		myMenuItem.removeEventListener("command", onCommand, false);
+		contentAreaContextMenu.removeChild(myMenuItem);
+		contentAreaContextMenu.removeEventListener('popupshowing',decideToShowMyMenuItem,false);		
+	}
+	
+	window.removeEventListener("DOMContentLoaded", handlePageLoad, false);
+
+	for each(let node in contentAreaContextMenu) {
+		if(node && node.id == 'myMenuItem'){
+			contentAreaContextMenu.removeChild(node);
+			break;
+		}
+	}
+	
+	//if(window.MutationObserver)
+	//	window.MutationObserver.disconnect();
+	
 	window.gBrowser.removeProgressListener(progressListener);
 	
 	// Remove any persistent UI elements
