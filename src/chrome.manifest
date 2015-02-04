@@ -1,2 +1,4 @@
 content microadblock chrome/content/
+locale	microadblock	en-US	chrome/locale/en-US/
+locale	microadblock	en-GB	chrome/locale/en-GB/
 skin microadblock icons icons/
