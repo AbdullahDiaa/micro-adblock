@@ -24,9 +24,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 var dirService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
 
 
-const 	global = this,
-		NS_XUL = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
-		BUTTON_ID = "micro-adblock-toolbar-button";
+const 	global = this;
 
 // easy and useful helpers for when I'm debugging
 XPCOMUtils.defineLazyModuleGetter(this, "console", "resource://gre/modules/devtools/Console.jsm");
@@ -44,16 +42,7 @@ function startup(data) AddonManager.getAddonByID(data.id, function(addon) {
 		Services.scriptloader.loadSubScript(fileURI.spec, global);
 	});
 	
-	// Load into any existing windows
-	let windows = Services.wm.getEnumerator("navigator:browser");
-	while (windows.hasMoreElements()) {
-		let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
-		loadIntoWindow(domWindow);
-	}
-	
-	// Add the button/listeners in every open window
-	eachWindow(loadIntoWindow);
-	Services.ww.registerNotification(windowWatcher);
+	windowManager.load();
 	
 	// Observe Page loads to block ads
 	policy.register();	
@@ -76,9 +65,7 @@ function shutdown(aData, aReason) {
 	// Remove page load observer
 	policy.unregister();
 	
-	// Remove button/lisenters from all windows
-	Services.ww.unregisterNotification(windowWatcher);
-	eachWindow(unloadFromWindow);
+	windowManager.unload();
 }
 
 function install(aData, aReason) {

@@ -59,6 +59,7 @@ let database = {
 		let synced_whitelist = prefs.getSyncedList("whitelist");
 		let synced_blocklist = prefs.getSyncedList("blocklist");
 		let synced_divslist = prefs.getSyncedList("divslist");
+		
 		//Merge synced data
 		if(synced_whitelist){
 			if(!arr.whitelist) arr.whitelist = {};
@@ -161,7 +162,7 @@ let database = {
 		{
 			arr.blocklist[url] = this.blocklist[url];
 		}
-		
+
 		for (var url in this.divslist)
 		{
 			arr.divslist[url] = true;			
