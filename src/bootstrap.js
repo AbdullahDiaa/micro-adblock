@@ -55,9 +55,6 @@ function startup(data) AddonManager.getAddonByID(data.id, function(addon) {
 		loadIntoWindow(domWindow);
 	}
 	
-	// Always set the default prefs.
-	setDefaultPrefs();
-	
 	// Add the button/listeners in every open window
 	eachWindow(loadIntoWindow);
 	Services.ww.registerNotification(windowWatcher);
