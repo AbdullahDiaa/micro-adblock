@@ -7,6 +7,102 @@ let windowWatcher = function(subject, topic) {
 };
 
 /**
+*
+* Add MutationObserver to remove add blocks/remove tracking links.
+*/
+function handlePageLoad(e) {
+		
+	try {
+		var win = e.originalTarget.defaultView;
+		var doc = win.document;
+		var blocklist = database.blocklist;
+	
+		if(null === doc.location.host || "" === doc.location.host)
+			return;
+	
+		if(database.isWhitelisted(doc.location.host)){
+			console.log(doc.location.host + " is whitelisted.");
+			return;
+		}
+	
+		var domain = (doc.location.host.match(/([^.]+)\.\w{2,3}(?:\.\w{2})?$/) || [])[1]
+	
+		if(blocklist[domain]){
+		
+			// Monitor target element and observe it to remove 
+			if(blocklist[domain].t){
+				// select the target node
+				var target = doc.querySelector(blocklist[domain].t);
+		 	   	
+				if(target){
+					if(blocklist[domain].r){
+						var elements = doc.querySelectorAll(blocklist[domain].r);
+						var i = elements.length;
+
+						while(i--) {
+							console.log("Removed", blocklist[domain].r);
+							elements[i].parentNode.removeChild(elements[i]);
+						}
+					}
+				
+					// Remove attribute from links
+					if(blocklist[domain].l){
+						var links = doc.querySelectorAll(blocklist[domain].l.t);
+
+						if(links.length > 0){
+							for ( var i = 0; i < links.length; i++ ) {
+								console.log("Cleaning links");
+								links[i].removeAttribute( blocklist[domain].l.r );
+							}
+						}
+					}
+				
+					if(blocklist[domain].o){
+						var MutationObserver = win.MutationObserver;
+						// create an observer instance
+						var observer = new MutationObserver(function(mutations) {
+							if(blocklist[domain].r){
+								var elements = doc.querySelectorAll(blocklist[domain].r);
+								var i = elements.length;
+
+								while(i--) {
+									console.log("Removed", blocklist[domain].r);
+									elements[i].parentNode.removeChild(elements[i]);
+								}
+							}
+						
+							// Remove attribute from links
+							if(blocklist[domain].l){
+								var links = doc.querySelectorAll(blocklist[domain].l.t);
+
+								if(links.length > 0){
+									for ( var i = 0; i < links.length; i++ ) {
+										console.log("Cleaning links");
+										links[i].removeAttribute( blocklist[domain].l.r );
+									}
+								}
+							}
+						
+						});
+			
+						// configuration of the observer:
+						var config = { childList:true };
+
+						// pass in the target node, as well as the observer options
+						observer.observe(target, config);
+					}
+				}
+			}
+					
+		}
+	
+		return;
+	} catch (e) {
+		console.log("ERR", e);
+	}
+};
+
+/**
  *
  * Location change monitor to update µ Adblock icon from whitelist
  */
@@ -71,113 +167,16 @@ let windowManager = {
 		return addon.getResourceURI("icons/icon" + size + (!enabled ? "-disabled": "") +  ".png").spec;
 	},
 	
-	/**
-	*
-	* Add MutationObserver to remove add blocks/remove tracking links.
-	*/
-	handlePageLoad : function(e) {
-		try {
-			var win = e.originalTarget.defaultView;
-			var doc = win.document;
-			var blocklist = database.blocklist;
-		
-			if(null === doc.location.host || "" === doc.location.host)
-				return;
-		
-			if(database.isWhitelisted(doc.location.host)){
-				console.log(doc.location.host + " is whitelisted.");
-				return;
-			}
-		
-			var domain = (doc.location.host.match(/([^.]+)\.\w{2,3}(?:\.\w{2})?$/) || [])[1]
-		
-			if(blocklist[domain]){
-			
-				// Monitor target element and observe it to remove 
-				if(blocklist[domain].t){
-					// select the target node
-					var target = doc.querySelector(blocklist[domain].t);
-			 	   	
-					if(target){
-						if(blocklist[domain].r){
-							var elements = doc.querySelectorAll(blocklist[domain].r);
-							var i = elements.length;
-
-							while(i--) {
-								console.log("Removed", blocklist[domain].r);
-								elements[i].parentNode.removeChild(elements[i]);
-							}
-						}
-					
-						// Remove attribute from links
-						if(blocklist[domain].l){
-							var links = doc.querySelectorAll(blocklist[domain].l.t);
-
-							if(links.length > 0){
-								for ( var i = 0; i < links.length; i++ ) {
-									console.log("Cleaning links");
-									links[i].removeAttribute( blocklist[domain].l.r );
-								}
-							}
-						}
-					
-						if(blocklist[domain].o){
-							var MutationObserver = win.MutationObserver;
-							// create an observer instance
-							var observer = new MutationObserver(function(mutations) {
-								if(blocklist[domain].r){
-									var elements = doc.querySelectorAll(blocklist[domain].r);
-									var i = elements.length;
-
-									while(i--) {
-										console.log("Removed", blocklist[domain].r);
-										elements[i].parentNode.removeChild(elements[i]);
-									}
-								}
-							
-								// Remove attribute from links
-								if(blocklist[domain].l){
-									var links = doc.querySelectorAll(blocklist[domain].l.t);
-
-									if(links.length > 0){
-										for ( var i = 0; i < links.length; i++ ) {
-											console.log("Cleaning links");
-											links[i].removeAttribute( blocklist[domain].l.r );
-										}
-									}
-								}
-							
-							});
-				
-							// configuration of the observer:
-							var config = { childList:true };
- 
-							// pass in the target node, as well as the observer options
-							observer.observe(target, config);
-						}
-					}
-				}
-						
-			}
-		
-			return;
-		} catch (e) {
-			console.log("ERR", e);
-		}
-	},
-	
 	eachWindow : function(callback) {
 		var that = this;
 
 		let windowEnumerator = Services.wm.getEnumerator("navigator:browser");
-	
+
 		while (windowEnumerator.hasMoreElements()) {
-			let domWindow = windowEnumerator.getNext();
-			
+			let domWindow = windowEnumerator.getNext();			
 			if (domWindow.document.readyState === 'complete') {
-				domWindow.addEventListener("DOMContentLoaded", this.handlePageLoad, false);
 				callback(domWindow, that);
-			} else {				
+			} else {							
 				that.runOnLoad(domWindow, callback, that);
 			}
 		}
@@ -217,16 +216,17 @@ let windowManager = {
 	
 	load : function(){
 		var that = this;	
-		
+				
 		// Load into any existing windows
 		let windows = Services.wm.getEnumerator("navigator:browser");
-		while (windows.hasMoreElements()) {
-			let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
-			this.loadIntoWindow(domWindow, that);
+		
+		while (windows.hasMoreElements()) {			
+			let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);			
+			windowManager.loadIntoWindow(domWindow, that);
 		}
 	
 		// Add the button/listeners in every open window
-		this.eachWindow(this.loadIntoWindow);
+		this.eachWindow(windowManager.loadIntoWindow);
 		Services.ww.registerNotification(windowWatcher);
 	},
 	
@@ -241,7 +241,10 @@ let windowManager = {
 	loadIntoWindow : function(window, that) {
 		if (!window)
 			return;
-
+		
+		
+		window.addEventListener("DOMContentLoaded", handlePageLoad, false);
+		
 		var contentAreaContextMenu = window.document.getElementById('contentAreaContextMenu');
 		if (contentAreaContextMenu) {
 			var menuItem = window.document.createElement('menuitem');
@@ -258,7 +261,7 @@ let windowManager = {
 		}
 
 		let toolbox = window.gNavToolbox || $(window, 'navigator-toolbox');
-	
+		
 		if (toolbox) { // navigator window
 			// add to palette
 			let button = window.document.createElementNS(that.NS_XUL, "toolbarbutton");
@@ -271,21 +274,21 @@ let windowManager = {
 			img.src = (button.getAttribute('cui-areatype') == "menu-panel") ? that.getIcon(32, true) : that.getIcon(16, true);
 			
 			button.appendChild( img );
-	  	  			
+	  	  	
 			// @TODO: Add badge with blocked links
 			//let badge = button.badge = window.document.createElementNS("http://www.w3.org/1999/xhtml","div");
 			//button.badge.style.display = "block";
 			//button.badge.textContent = "2";
 			//button.badge.setAttribute("style", "margin-top:-16px;padding: 1px 2px;margin-right:-16px;position:relative;z-index:99;background:#C13832 none;border-radius:3px;padding:2px;line-height:1;font-size:8px;color:white;white-space:nowrap;box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);");
 			//button.appendChild( badge );
-			button.addEventListener("command", that.toggleButton, false);
-	  	 
+			button.addEventListener("command", that.toggleButton, false);			
+			
 			toolbox.palette.appendChild(button);
 	  
 			// move to saved toolbar position
 			let {toolbarId, nextItemId} = prefs.getPrefs(),	  
 			toolbar = toolbarId && $( window, toolbarId);
-				  
+						
 			if (toolbar) {
 				let nextItem = $( window, nextItemId);				
 				toolbar.insertItem(that.BUTTON_ID , nextItem && nextItem.parentNode.id == toolbarId && nextItem, null, false);
