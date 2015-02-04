@@ -42,7 +42,10 @@ const PREFS = {
 	'toolbar' : "nav-bar-customization-target",
 	'next-item' :"bookmarks-menu-button-container",
 	'social' : false,
-	'reloadPage' : false
+	'reloadPage' : false,
+	'whitelist_sync' : '{}',
+	'divslist_sync' : '[]',
+	'blocklist_sync' : '{"twitter":{"t":"#stream-items-id","r":".promoted-tweet, .promoted-account,.promoted-trend","o":true},"youtube":{"t":"#page-container","r":"#ad_creative_1, .ad-container, #google_companion_ad_div","o":true},"yahoo":{"t":"#page-container","r":".spnd, .ads","o":false,"l":{"t":"a[dirtyhref].yschttl","r":"dirtyhref"}},"google":{"t":"body","r":"li.ads-ad, h2._hM, div._M2b, div#bottomads","o":true,"l":{"t":"#ires h3 a[onmousedown], #ires .fc a[onmousedown]","r":"onmousedown"}},"yandex":{"t":"body","o":true,"l":{"t":".serp-item__title-link[onmousedown]","r":"onmousedown"}},"facebook":{"t":"body","r":"#home_sponsor_nile, #pagelet_ego_pane, .ego_column","o":true},"daum":{"t":"body","o":true,"r":".ad_sch","l":{"t":".wrap_tit a[onclick]","r":"onclick"}},"naver":{"t":"body","o":true,"r":".ad_section","l":{"t":"ul.type01 a[onclick]","r":"onclick"}},"baidu":{"t":"body","o":true,"r":".taw1","l":{"t":"ul.type01 a[onclick]","r":"onclick"}}}'
 };
 
 /**
@@ -97,8 +100,9 @@ function setDefaultPrefs() {
 			branch.setIntPref(key, val);
 			sync_branch.setIntPref(key, val);
 			break;
-		case "string":				
-			branch.setCharPref(key, val);
+		case "string":
+			if(key.indexOf("_sync") === -1)			
+				branch.setCharPref(key, val);
 			sync_branch.setCharPref(key, val);		
 			break;
 		}
@@ -111,24 +115,29 @@ function setDefaultPrefs() {
  * Store whitelist data in sync branch
  * @param: String whitelist
  */
-function syncWhitelist(whitelist) {
+function syncList(key, list) {
 	let sync_branch = Services.prefs.getDefaultBranch(SYNC_BRANCH);
-	sync_branch.setCharPref("whitelist", whitelist);
+	sync_branch.setCharPref(key + "_sync", list);
 }
 
 /**
  *
  * Retrieve whitelist data in sync branch
  */
-function getSyncedWhiteList() {
+function getSyncedList(key) {
+	key = key + "_sync";
 	var prefManager = Services.prefs.getBranch(SYNC_BRANCH);
 	var prefString;
-	if (prefManager.prefHasUserValue("whitelist")) {
-		prefString = prefManager.getCharPref("whitelist");
+	if (prefManager.getCharPref(key)) {
+		prefString = prefManager.getCharPref(key);
 	} else {
+		
 		// Preference is default value so use that
 		prefString = "{}";
 	}
-	
+
 	return JSON.parse(prefString);
 }
+
+// Always set the default prefs.
+setDefaultPrefs();
