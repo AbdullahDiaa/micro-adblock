@@ -36,7 +36,6 @@ let policy = {
 	register: function()
 	{	
 		try {
-			console.log("Register")
 			let registrar = Cm.QueryInterface(Ci.nsIComponentRegistrar);
 			registrar.registerFactory(this.classID, this.classDescription, this.contractID, this);
 			let categoryManager = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
@@ -46,7 +45,7 @@ let policy = {
 			if ('NS_ERROR_FACTORY_EXISTS' == e.name) {
 			// No-op, ignore these. But why do they happen!?
 			} else {
-				console.log('Error registering ScriptProtocol factory:\n' + e + '\n');
+				LOG('Error registering ScriptProtocol factory:\n' + e + '\n');
 			}
 			return;
 		};
@@ -61,7 +60,7 @@ let policy = {
 				registrar.unregisterFactory(this.classID, this);			
 			}.bind(this), Ci.nsIEventTarget.DISPATCH_NORMAL);
 		}catch(e){
-			console.log("Err", e.name);
+			LOG('Error unregistering ScriptProtocol factory:\n' + e.name + '\n');
 		};
 	},
 
@@ -69,60 +68,56 @@ let policy = {
 	{
 		if(contentLocation.schemeIs("http") || contentLocation.schemeIs("https")) {
 			let host = contentLocation.asciiHost;
-			try{
-				let win = this.getWindow(node);
-				let window = Services.wm.getMostRecentWindow("navigator:browser");
-				let activeWindow = window.content.document.location.host;
-				
-				// ACCEPT all links for whitelisted websites
-				if(database.isWhitelisted(activeWindow)){
+			let win = this.getWindow(node);
+			let window = Services.wm.getMostRecentWindow((Services.appinfo.name === "Thunderbird" ? "mail:3pane" : "navigator:browser"));
+			let activeWindow = window.content.document.location.host;
+			
+			// ACCEPT all links for whitelisted websites
+			if(database.isWhitelisted(activeWindow)){
+				return this.ACCEPT;
+			}
+		
+			if(win){
+				// If window node is the browser
+				if(win.location.host === 'browser'){
+					
+					// Update custom block list
+					if(database.divslist){
+						var regex = Object.keys(database.divslist);
+						if(regex.length > 0)
+							this.customBlock = new RegExp("(?:\.|^)" + regex.join("|"), "i");
+					}
+					
 					return this.ACCEPT;
 				}
+					
+				// If link loaded inside the page
+				if(win.location.host == host){
+					return this.ACCEPT;
+				}
+			}
+								
+			var i = BlockRe.length;
 			
-				if(win){
-					// If window node is the browser
-					if(win.location.host === 'browser'){
-						
-						// Update custom block list
-						if(database.divslist){
-							var regex = Object.keys(database.divslist);
-							if(regex.length > 0)
-								this.customBlock = new RegExp("(?:\.|^)" + regex.join("|"), "i");
+			if(this.customBlock){
+				if(this.customBlock.test(host)){
+					return this.REJECT;
+				}
+			}
+			
+			// Match all urls against easylist/easyprivacy to block
+			while(i > 0){				
+				if (BlockRe[i-1].test(host)) {
+					i =0;
+					return this.REJECT;					
+				}else{
+					if(prefs.getPref("social")){
+						if(this.social.test(host)){
+							return this.REJECT;
 						}
-						
-						return this.ACCEPT;
 					}
-						
-					// If link loaded inside the page
-					if(win.location.host == host){
-						return this.ACCEPT;
-					}
+					i--;
 				}
-									
-				var i = BlockRe.length;
-				
-				if(this.customBlock){
-					if(this.customBlock.test(host)){
-						return this.REJECT;
-					}
-				}
-				
-				// Match all urls against easylist/easyprivacy to block
-				while(i > 0){				
-					if (BlockRe[i-1].test(host)) {
-						i =0;
-						return this.REJECT;					
-					}else{
-						if(prefs.getPref("social")){
-							if(this.social.test(host)){
-								return this.REJECT;
-							}
-						}
-						i--;
-					}
-				}
-			}catch(e){
-				console.log("ERR", e);
 			}
 						
 		}

@@ -10,27 +10,27 @@
 
 
 //Let's define Components objects
-const {
-	classes: Cc,
-	interfaces: Ci,
-	utils: Cu,
-	manager: Cm
-} = Components;
+const {classes: Cc, interfaces: Ci, utils: Cu, manager: Cm, results: Cr} = Components;
 
 // Import necessary modules
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/AddonManager.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+
 var dirService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
-
-let NS_XUL = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
-let BUTTON_ID = "micro-adblock-toolbar-button";
-
-const 	global = this;
 
 // easy and useful helpers for when I'm debugging
 XPCOMUtils.defineLazyModuleGetter(this, "console", "resource://gre/modules/devtools/Console.jsm");
 
+function LOG(str) {
+	if(!str) { str = typeof(str) + ': ' + str; }
+	console.log(' :: MICRO-ADBLOCK :: ' + str);
+}
+
+let NS_XUL = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul',
+	BUTTON_ID = "micro-adblock-toolbar-button";
+
+const 	global = this;
 
 // Called when the extension needs to start itself up. This happens at application launch time or when the extension is enabled after being disabled (or after it has been shut down in order to install an update. As such, this can be called many times during the lifetime of the application.
 	
@@ -70,9 +70,7 @@ function shutdown(aData, aReason) {
 	windowListener.unregister();
 }
 
-function install(aData, aReason) {
-		
-}
+function install(aData, aReason) { }
 
 // This function is called after the last call to shutdown() before a particular version of an extension is uninstalled. This will not be called if install() was never called.
 

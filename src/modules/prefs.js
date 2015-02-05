@@ -61,19 +61,13 @@ let prefs = {
 	 * Get the preference value of type specified in PREFS
 	 */
 	getPref : function(key){	
-		try{
-			// Figure out what type of pref to fetch
-			switch (typeof this.PREFS[key]) {
-			case "boolean":
-				return this.PREF_BRANCH.getBoolPref(key);
-			case "string":
-				return this.PREF_BRANCH.getCharPref(key);
-			}
-		} catch (e) {
-			console.log(e.name);
-			return false;
+		// Figure out what type of pref to fetch
+		switch (typeof this.PREFS[key]) {
+		case "boolean":
+			return this.PREF_BRANCH.getBoolPref(key);
+		case "string":
+			return this.PREF_BRANCH.getCharPref(key);
 		}
-		return false;
 	},
 	
 	/**

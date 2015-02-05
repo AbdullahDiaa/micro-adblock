@@ -26,7 +26,6 @@ function toggleButton(e){
 * Add MutationObserver to remove add blocks/remove tracking links.
 */
 function handlePageLoad(e) {
-	console.log("handlePageLoad");
 	var win = e.originalTarget.defaultView;
 	var doc = win.document;
 		
@@ -53,7 +52,6 @@ function handlePageLoad(e) {
 					var i = elements.length;
 
 					while(i--) {
-						console.log("Removed", blocklist[domain].r);
 						elements[i].parentNode.removeChild(elements[i]);
 					}
 				}
@@ -64,7 +62,6 @@ function handlePageLoad(e) {
 
 					if(links.length > 0){
 						for ( var i = 0; i < links.length; i++ ) {
-							console.log("Cleaning links");
 							links[i].removeAttribute( blocklist[domain].l.r );
 						}
 					}
@@ -79,7 +76,6 @@ function handlePageLoad(e) {
 							var i = elements.length;
 
 							while(i--) {
-								console.log("Removed", blocklist[domain].r);
 								elements[i].parentNode.removeChild(elements[i]);
 							}
 						}
@@ -90,7 +86,6 @@ function handlePageLoad(e) {
 
 							if(links.length > 0){
 								for ( var i = 0; i < links.length; i++ ) {
-									console.log("Cleaning links");
 									links[i].removeAttribute( blocklist[domain].l.r );
 								}
 							}
@@ -118,11 +113,10 @@ var progressListener = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsISupportsWeakReference, Ci.nsIWebProgressListener]),
 	onLocationChange: function(aProgress, aRequest, aURI)
 	{	
-		console.log("onLocationChange");
 		let window = Services.wm.getMostRecentWindow((Services.appinfo.name === "Thunderbird" ? "mail:3pane" : "navigator:browser"));
 		if(aURI.schemeIs("http") || aURI.schemeIs("https")){
 			let button = $( window, BUTTON_ID);
-			console.log(aURI.host);
+
 			if(database.isWhitelisted(aURI.host)){
 				button.img.src =  windowListener.getIconURI(button.getAttribute('cui-areatype'), false);
 			}else{
@@ -226,7 +220,6 @@ var windowListener = {
 		if(placement === "menu-panel")
 			inMenuPanel = true;
 		
-		console.log(Services.appinfo.name);
 		//Always use big icon for SeaMonkey and areas other than AREA_NAVBAR
 		if(Services.appinfo.name === "SeaMonkey" || inMenuPanel)
 			size = 32;
@@ -279,7 +272,6 @@ var windowListener = {
 			
 			if (toolbar) {
 				let nextItem = $( window, nextItemId);	
-				console.log(button.img);			
 				toolbar.insertItem(BUTTON_ID , nextItem && nextItem.parentNode.id == toolbarId && nextItem, null, false);
 			}
 	  	  	
