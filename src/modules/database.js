@@ -131,7 +131,7 @@ let database = {
 	
 	toggle: function(activeWindow){		
 		if(!this.whitelist[activeWindow]){
-			this.record(activeWindow);
+			this.record(activeWindow);			
 			return true;
 		}else{
 			this.remove(activeWindow);

@@ -23,6 +23,8 @@ Cu.import("resource://gre/modules/AddonManager.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 var dirService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
 
+let NS_XUL = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+let BUTTON_ID = "micro-adblock-toolbar-button";
 
 const 	global = this;
 
@@ -42,7 +44,7 @@ function startup(data) AddonManager.getAddonByID(data.id, function(addon) {
 		Services.scriptloader.loadSubScript(fileURI.spec, global);
 	});
 	
-	windowManager.load();
+	windowListener.register();
 	
 	// Observe Page loads to block ads
 	policy.register();	
@@ -65,7 +67,7 @@ function shutdown(aData, aReason) {
 	// Remove page load observer
 	policy.unregister();
 	
-	windowManager.unload();
+	windowListener.unregister();
 }
 
 function install(aData, aReason) {
