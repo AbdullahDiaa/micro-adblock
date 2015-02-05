@@ -6,9 +6,9 @@ let $ = function(window, id) window.document.getElementById(id);
 */
 function toggleButton(e){
 	
-	let window = Services.wm.getMostRecentWindow("navigator:browser");
+	let window = Services.wm.getMostRecentWindow((Services.appinfo.name === "Thunderbird" ? "mail:3pane" : "navigator:browser"));
 	let activeWindow = window.content.document.location.host;
-
+	
 	if(database.toggle(activeWindow)){
 		this.img.src = windowListener.getIconURI("", false);
 	}else{
@@ -16,7 +16,7 @@ function toggleButton(e){
 	}
 	
 	// Reload page on toggle
-	if(prefs.getPref("reloadPage") === false){
+	if(prefs.getPref("reloadPage")){
 		window.content.document.location.reload(true);
 	}
 }
@@ -26,7 +26,7 @@ function toggleButton(e){
 * Add MutationObserver to remove add blocks/remove tracking links.
 */
 function handlePageLoad(e) {
-
+	console.log("handlePageLoad");
 	var win = e.originalTarget.defaultView;
 	var doc = win.document;
 		
@@ -119,7 +119,7 @@ var progressListener = {
 	onLocationChange: function(aProgress, aRequest, aURI)
 	{	
 		console.log("onLocationChange");
-		let window = Services.wm.getMostRecentWindow("navigator:browser");
+		let window = Services.wm.getMostRecentWindow((Services.appinfo.name === "Thunderbird" ? "mail:3pane" : "navigator:browser"));
 		if(aURI.schemeIs("http") || aURI.schemeIs("https")){
 			let button = $( window, BUTTON_ID);
 			console.log(aURI.host);
@@ -226,6 +226,7 @@ var windowListener = {
 		if(placement === "menu-panel")
 			inMenuPanel = true;
 		
+		console.log(Services.appinfo.name);
 		//Always use big icon for SeaMonkey and areas other than AREA_NAVBAR
 		if(Services.appinfo.name === "SeaMonkey" || inMenuPanel)
 			size = 32;
@@ -240,7 +241,7 @@ var windowListener = {
 		}
 
 		let doc = window.document;
-		let toolbox = window.gNavToolbox || $(window, 'navigator-toolbox');
+		let toolbox = window.gNavToolbox || $(window, 'navigator-toolbox') || $(window, "mail-toolbox");
 		
 		if (toolbox) { // navigator window
 			
@@ -274,7 +275,7 @@ var windowListener = {
 			
 			// Move the button to saved toolbar position
 			let {toolbarId, nextItemId} = prefs.getPrefs(),
-			toolbar = toolbarId && $( window, toolbarId);
+			toolbar = toolbarId && ($( window, toolbarId) || $(window, 'mail-bar3'));
 			
 			if (toolbar) {
 				let nextItem = $( window, nextItemId);	
@@ -335,13 +336,15 @@ var windowListener = {
 		
 		
 		// SeaMonkey can't catch gBrowser :< 
-		var browser = (window.gBrowser || window.getBrowser());
-		if(browser){
+		if(!window.gBrowser)
+			window.gBrowser = window.getBrowser();
+
+		if(window.gBrowser){
 			// remove DOMContentLoaded listener
-			browser.removeEventListener("DOMContentLoaded", handlePageLoad, true);
+			window.gBrowser.removeEventListener("DOMContentLoaded", handlePageLoad, true);
 			
 			//remove location listener
-			browser.removeProgressListener(progressListener);
+			window.gBrowser.removeProgressListener(progressListener);
 		}
 	}
 };
