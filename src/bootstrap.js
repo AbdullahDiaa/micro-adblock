@@ -33,7 +33,7 @@ let NS_XUL = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul',
 const 	global = this;
 
 // Called when the extension needs to start itself up. This happens at application launch time or when the extension is enabled after being disabled (or after it has been shut down in order to install an update. As such, this can be called many times during the lifetime of the application.
-	
+
 function startup(data) AddonManager.getAddonByID(data.id, function(addon) {
 
 	this.addon = addon;

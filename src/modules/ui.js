@@ -327,16 +327,18 @@ var windowListener = {
 		}	
 		
 		
-		// SeaMonkey can't catch gBrowser :< 
-		if(!window.gBrowser)
-			window.gBrowser = window.getBrowser();
-
-		if(window.gBrowser){
+		var browser = window.gBrowser;
+		
+		// SeaMonkey can't catch gBrowser :<
+		if(Services.appinfo.name === "SeaMonkey")
+			browser = ( window.gBrowser || window.getBrowser() );
+		
+		if(browser){
 			// remove DOMContentLoaded listener
-			window.gBrowser.removeEventListener("DOMContentLoaded", handlePageLoad, true);
+			browser.removeEventListener("DOMContentLoaded", handlePageLoad, true);
 			
 			//remove location listener
-			window.gBrowser.removeProgressListener(progressListener);
+			browser.removeProgressListener(progressListener);
 		}
 	}
 };
