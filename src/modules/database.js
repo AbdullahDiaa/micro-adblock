@@ -68,6 +68,7 @@ let database = {
 			  arr.whitelist[website] = true;
 			}
 		}
+		
 		if(synced_blocklist){
 			if(!arr.blocklist) arr.blocklist = {};
 			
@@ -140,6 +141,12 @@ let database = {
 	},
 	
 	close: function(){
+		
+		// Update synced data
+		prefs.syncList("whitelist", JSON.stringify(this.whitelist));
+		prefs.syncList("blocklist", JSON.stringify(this.blocklist));
+		prefs.syncList("divslist", JSON.stringify(this.divslist));
+		
 		 // Initialize output stream.
 		var outputStream = Cc["@mozilla.org/network/file-output-stream;1"]
 							.createInstance(Ci.nsIFileOutputStream);
