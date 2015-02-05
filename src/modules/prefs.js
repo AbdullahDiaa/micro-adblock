@@ -44,7 +44,7 @@ let prefs = {
 	PREF_TB : "toolbar",
 	PREF_NEXT : "next-item",
 	PREFS : {
-		"toolbar" : "nav-bar-customization-target",
+		"toolbar" : "nav-bar",
 		"next-item" :"bookmarks-menu-button-container",
 		'social' : false,
 		'reloadPage' : false,
@@ -105,19 +105,9 @@ let prefs = {
 	},
 
 	getPrefs : function() {	
-		try {
-			//Australis nav bar
-			var ins = "nav-bar-customization-target";
-		} catch (e) {
-			console.log("ERR", e.name)
-		}
 		
-		//Old navbar
-		if(!ins)
-			ins = "nav-bar";
-	
 		return {
-			toolbarId: this.getPref(this.PREF_TB) ? this.getPref(this.PREF_TB) : ins,
+			toolbarId: this.getPref(this.PREF_TB),
 			nextItemId: this.getPref(this.PREF_NEXT) ? this.getPref(this.PREF_NEXT) :"bookmarks-menu-button-container"
 		};
 	},
@@ -140,7 +130,7 @@ let prefs = {
 		prefString = this.SYNC_BRANCH.getCharPref(key + "_sync");
 		return JSON.parse(prefString);
 	}
-}
+};
 
 // Always set the default prefs.
 prefs.setDefaultPrefs();

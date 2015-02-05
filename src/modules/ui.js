@@ -16,7 +16,7 @@ function handlePageLoad(e) {
 		var win = e.originalTarget.defaultView;
 		var doc = win.document;
 		var blocklist = database.blocklist;
-	
+		
 		if(null === doc.location.host || "" === doc.location.host)
 			return;
 	
@@ -106,7 +106,7 @@ function handlePageLoad(e) {
  *
  * Location change monitor to update µ Adblock icon from whitelist
  */
-let progressListener = {
+var progressListener = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsISupportsWeakReference, Ci.nsIWebProgressListener]),
 	onLocationChange: function(aProgress, aRequest, aURI)
 	{
@@ -115,10 +115,17 @@ let progressListener = {
 			if(aURI.schemeIs("http") || aURI.schemeIs("https")){
 				let button = $( window, windowManager.BUTTON_ID);
 				
+				var icon_size = 16;
+				
+				//Big Icon for SeaMonkey
+				if(Services.appinfo.ID[1] === "9"){
+					icon_size = 32;
+				}
+				
 				if(database.isWhitelisted(aURI.host)){
-					button.img.src = (button.getAttribute('cui-areatype') == "menu-panel") ? windowManager.getIcon(32, false) : windowManager.getIcon(16, false);
+					button.img.src = (button.getAttribute('cui-areatype') == "menu-panel") ? windowManager.getIcon(32, false) : windowManager.getIcon(icon_size, false);
 				}else{
-					button.img.src = (button.getAttribute('cui-areatype') == "menu-panel") ? windowManager.getIcon(32, true) : windowManager.getIcon(16, true);
+					button.img.src = (button.getAttribute('cui-areatype') == "menu-panel") ? windowManager.getIcon(32, true) : windowManager.getIcon(icon_size, true);
 				}
 			}
 			
@@ -137,9 +144,20 @@ let windowManager = {
 	* Toggle whitelist record
 	*/
 	toggleButton : function(){
-		let toggle = !database.toggle();	
-		this.img.src = (this.getAttribute('cui-areatype') == "menu-panel") ? windowManager.getIcon(32, toggle) :   windowManager.getIcon(16, toggle);
-		console.log(prefs.getPref("reloadPage"));
+		let window = Services.wm.getMostRecentWindow("navigator:browser");
+		let activeWindow = window.content.document.location.host;
+		var icon_size = 16;
+		
+		//Big Icon for SeaMonkey
+		if(Services.appinfo.ID[1] === "9"){
+			icon_size = 32;
+		}
+		
+		if(database.toggle(activeWindow)){
+			this.img.src = (this.getAttribute('cui-areatype') == "menu-panel") ? windowManager.getIcon(32, false) :   windowManager.getIcon(icon_size, false);
+		}else{
+			this.img.src = (this.getAttribute('cui-areatype') == "menu-panel") ? windowManager.getIcon(32, true) :   windowManager.getIcon(icon_size, true);	
+		}
 	
 		// Reload page on toggle
 		if(prefs.getPref("reloadPage")){
@@ -169,14 +187,13 @@ let windowManager = {
 	
 	eachWindow : function(callback) {
 		var that = this;
-
 		let windowEnumerator = Services.wm.getEnumerator("navigator:browser");
 
 		while (windowEnumerator.hasMoreElements()) {
 			let domWindow = windowEnumerator.getNext();			
-			if (domWindow.document.readyState === 'complete') {
+			if (domWindow.document.readyState === 'complete') {				
 				callback(domWindow, that);
-			} else {							
+			} else {									
 				that.runOnLoad(domWindow, callback, that);
 			}
 		}
@@ -216,12 +233,12 @@ let windowManager = {
 	
 	load : function(){
 		var that = this;	
-				
+
 		// Load into any existing windows
 		let windows = Services.wm.getEnumerator("navigator:browser");
 		
 		while (windows.hasMoreElements()) {			
-			let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);			
+			let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);						
 			windowManager.loadIntoWindow(domWindow, that);
 		}
 	
@@ -241,8 +258,7 @@ let windowManager = {
 	loadIntoWindow : function(window, that) {
 		if (!window)
 			return;
-		
-		
+				
 		window.addEventListener("DOMContentLoaded", handlePageLoad, false);
 		
 		var contentAreaContextMenu = window.document.getElementById('contentAreaContextMenu');
@@ -273,6 +289,11 @@ let windowManager = {
 			let img = button.img = window.document.createElementNS("http://www.w3.org/1999/xhtml","img");
 			img.src = (button.getAttribute('cui-areatype') == "menu-panel") ? that.getIcon(32, true) : that.getIcon(16, true);
 			
+			//Big Icon for SeaMonkey
+			if(Services.appinfo.ID[1] === "9"){
+				img.src = that.getIcon(32, true);
+			}
+			
 			button.appendChild( img );
 	  	  	
 			// @TODO: Add badge with blocked links
@@ -286,16 +307,21 @@ let windowManager = {
 			toolbox.palette.appendChild(button);
 	  
 			// move to saved toolbar position
-			let {toolbarId, nextItemId} = prefs.getPrefs(),	  
+			let {toolbarId, nextItemId} = prefs.getPrefs(),
 			toolbar = toolbarId && $( window, toolbarId);
-						
+			
 			if (toolbar) {
 				let nextItem = $( window, nextItemId);				
 				toolbar.insertItem(that.BUTTON_ID , nextItem && nextItem.parentNode.id == toolbarId && nextItem, null, false);
 			}
 	  	  	
-			window.addEventListener("aftercustomization", that.afterCustomize, false);
-			window.gBrowser.addProgressListener(progressListener);
+			//window.addEventListener("aftercustomization", that.afterCustomize, false);
+			
+			if(Services.appinfo.ID[1] === "9"){
+				window.gBrowser.addProgressListener(progressListener, Ci.nsIWebProgress.NOTIFY_LOCATION);
+			}else{
+				window.gBrowser.addProgressListener(progressListener);
+			}
 
 		}
 	},

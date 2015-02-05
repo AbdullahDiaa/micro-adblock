@@ -34,38 +34,39 @@ let policy = {
 	xpcom_categories: ["content-policy"],
 
 	register: function()
-	{
+	{	
 		try {
+			console.log("Register")
 			let registrar = Cm.QueryInterface(Ci.nsIComponentRegistrar);
 			registrar.registerFactory(this.classID, this.classDescription, this.contractID, this);
 			let categoryManager = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
 			categoryManager.addCategoryEntry('content-policy', this.contractID, this.contractID, false, true);
 		} catch (e) {
+			
 			if ('NS_ERROR_FACTORY_EXISTS' == e.name) {
 			// No-op, ignore these. But why do they happen!?
 			} else {
 				console.log('Error registering ScriptProtocol factory:\n' + e + '\n');
 			}
 			return;
-		}
+		};
 	},
 	unregister: function() {
 		let cm = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
 		cm.deleteCategoryEntry('content-policy', this.contractID, false);
 		// This needs to run asynchronously, see bug 753687
 		let registrar = Cm.QueryInterface(Ci.nsIComponentRegistrar);
-		try{
+		try{			
 			Services.tm.currentThread.dispatch(function() {
 				registrar.unregisterFactory(this.classID, this);			
 			}.bind(this), Ci.nsIEventTarget.DISPATCH_NORMAL);
 		}catch(e){
 			console.log("Err", e.name);
-		}
+		};
 	},
 
 	shouldLoad: function(contentType, contentLocation, requestOrigin, node, mimeTypeGuess, extra)
 	{
-
 		if(contentLocation.schemeIs("http") || contentLocation.schemeIs("https")) {
 			let host = contentLocation.asciiHost;
 			try{

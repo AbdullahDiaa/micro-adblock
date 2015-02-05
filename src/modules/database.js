@@ -129,10 +129,7 @@ let database = {
 		return true;
 	},
 	
-	toggle: function(){
-		let window = Services.wm.getMostRecentWindow("navigator:browser");
-		let activeWindow = window.content.document.location.host;
-		
+	toggle: function(activeWindow){		
 		if(!this.whitelist[activeWindow]){
 			this.record(activeWindow);
 			return true;
@@ -179,8 +176,7 @@ let database = {
 		this.divslist = {};
 		
 	}
-}
-
+};
 
 // Initialize addon database
 database.init();
