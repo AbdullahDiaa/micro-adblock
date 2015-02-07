@@ -68,9 +68,8 @@ function handlePageLoad(e) {
 				}
 				
 				if(blocklist[domain].o){
-					var MutationObserver = win.MutationObserver;
-					// create an observer instance
-					var observer = new MutationObserver(function(mutations) {
+					win.setInterval(function () {
+						console.log("watching you");
 						if(blocklist[domain].r){
 							var elements = doc.querySelectorAll(blocklist[domain].r);
 							var i = elements.length;
@@ -90,6 +89,12 @@ function handlePageLoad(e) {
 								}
 							}
 						}
+					}, 500);
+					
+					/*
+					var MutationObserver = win.MutationObserver;
+					// create an observer instance
+					var observer = new MutationObserver(function(mutations) {
 						
 					});
 			
@@ -98,6 +103,7 @@ function handlePageLoad(e) {
 
 					// pass in the target node, as well as the observer options
 					observer.observe(target, config);
+					*/
 				}
 			}
 		}
